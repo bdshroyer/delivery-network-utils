@@ -21,8 +21,12 @@ def make_acyclic(G, hubs):
         raise RuntimeError("Must supply a networkx graph as input.")
 
     H = deepcopy(G)
+
     if isinstance(H, nx.Graph):
         H = H.to_directed()
+
+    if nx.algorithms.dag.is_directed_acyclic_graph(H):
+        return H
 
     if type(hubs) != list:
         hubs = [hubs]

@@ -36,6 +36,13 @@ def simple_unfolded_digraph():
     return G
 
 @pytest.fixture
+def simple_acyclic_digraph():
+    G = nx.DiGraph()
+    G.add_nodes_from([1,2,3,4])
+    G.add_edges_from([(1,2), (1,3), (2,4), (3,4)])
+    return G
+
+@pytest.fixture
 def multihub_unfolded_digraph():
     G = nx.DiGraph()
     G.add_nodes_from([1,2,3,-1])
@@ -75,10 +82,10 @@ def test_make_acyclic_a_graph():
     assert "Must supply a networkx graph as input." in str(rte.value)
 
 # Acts as a no-op on a DAG
-def test_make_acyclic_acyclic(simple_unfolded_digraph, simple_cyclic_digraph_hub):
-    G = ma.make_acyclic(simple_unfolded_digraph, simple_cyclic_digraph_hub)
-    assert G.nodes == simple_unfolded_digraph.nodes
-    assert G.edges == simple_unfolded_digraph.edges
+def test_make_acyclic_acyclic(simple_acyclic_digraph, simple_cyclic_digraph_hub):
+    G = ma.make_acyclic(simple_acyclic_digraph, simple_cyclic_digraph_hub)
+    assert G.nodes == simple_acyclic_digraph.nodes
+    assert G.edges == simple_acyclic_digraph.edges
 
 # Processes an undirected graph as though it were a directed graph.
 def test_make_acyclic_undirected(simple_cyclic_digraph, simple_cyclic_digraph_hub, simple_unfolded_digraph):
