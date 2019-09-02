@@ -3,6 +3,20 @@ from copy import deepcopy
 
 
 def make_acyclic(G, hubs):
+    """
+    Returns a directed acyclic graph H, which is a version of G subject to the following modifications:
+    * H is directed and acyclic, even if G is not.
+    * Every node n in hubs (which should be a subset of G) has a "shadow" nprime in H.
+    * Every edge in G that is inbound to a node n in hubs is now inbound to its shadow nprime in H so that:
+     * Every hub node n in H has an in-degree of 0.
+     * Every shadow node nprime in H has an out-degree of 0.
+     * out-degree(n in H) == out-degree(n in G).
+     * in-degree(nprime in H) == in-degree(n in G).
+
+    make_acyclic raises an error if:
+    * G is not a networkx graph
+    * Some node n in hubs does not exist in G.
+    """
     if not issubclass(type(G), nx.Graph):
         raise RuntimeError("Must supply a networkx graph as input.")
 
