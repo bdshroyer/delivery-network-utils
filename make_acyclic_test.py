@@ -73,13 +73,13 @@ def test_make_acyclic_empty(simple_cyclic_digraph):
     fake_hub = max(list(simple_cyclic_digraph.nodes)) + 1
     with pytest.raises(RuntimeError) as rte:
         ma.make_acyclic(simple_cyclic_digraph, fake_hub)
-    assert "Base '{}' does not exist in distribution network.".format(fake_hub) in str(rte.value)
+    assert "Hub '{}' does not exist in distribution network.".format(fake_hub) in str(rte.value)
 
 # Raises an error if a non-graph is provided
 def test_make_acyclic_a_graph():
     with pytest.raises(RuntimeError) as rte:
         ma.make_acyclic(None, None)
-    assert "Must supply a networkx graph as input." in str(rte.value)
+    assert "Must supply a networkx digraph as input." in str(rte.value)
 
 # Acts as a no-op on a DAG
 def test_make_acyclic_acyclic(simple_acyclic_digraph, simple_cyclic_digraph_hub):
@@ -87,11 +87,11 @@ def test_make_acyclic_acyclic(simple_acyclic_digraph, simple_cyclic_digraph_hub)
     assert G.nodes == simple_acyclic_digraph.nodes
     assert G.edges == simple_acyclic_digraph.edges
 
-# Processes an undirected graph as though it were a directed graph.
+# Raises an error on an undirected graph
 def test_make_acyclic_undirected(simple_cyclic_digraph, simple_cyclic_digraph_hub, simple_unfolded_digraph):
-    G = ma.make_acyclic(simple_cyclic_digraph.to_undirected(), simple_cyclic_digraph_hub)
-    assert G.nodes == simple_unfolded_digraph.nodes
-    assert G.edges == simple_unfolded_digraph.edges
+    with pytest.raises(RuntimeError) as rte:
+        ma.make_acyclic(simple_cyclic_digraph.to_undirected(), simple_cyclic_digraph_hub)
+    assert "Must supply a directed graph as input." in str(rte.value)
 
 # Happy path--Given a cyclic digraph and a list of hub nodes, returns an unfolded DAG
 def test_make_acyclic_multihub(multihub_cyclic_digraph, mulithub_cyclic_digraph_hubs, multihub_unfolded_digraph):
